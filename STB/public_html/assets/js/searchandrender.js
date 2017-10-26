@@ -13,6 +13,8 @@
  */
 var map;
 var infoWindow;
+var markers = [];
+var urltwitter="https://twitter.com/"; 
 function initMap() {
     var centerWorld = {lat: 0, lng: 0};
     infoWindow = new google.maps.InfoWindow;
@@ -55,7 +57,6 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.open(map);
 }
 
-<<<<<<< HEAD
 
 function searchTweetsByStrNGeo(hashtag, geocode, callback) {
     // Get Tweets
@@ -65,14 +66,6 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
     cb.setBearerToken(CONFIG.BEARER_TOKEN);
     
      
-=======
-function searchTweetsByStrNGeo(hashtag, geocode, callback) {
-    // Get Tweets
-
-    var cb = new Codebird();
-
-    cb.setBearerToken(CONFIG.BEARER_TOKEN);
->>>>>>> d16c32a9f54d821e797dba0f85dd40bb555eeac7
 
     var params = {
         q: hashtag,
@@ -80,92 +73,57 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
         count: "100"
     };
 
-    var tweets;
-
     cb.__call(
             "search_tweets",
             params,
-<<<<<<< HEAD
             callback,
-=======
-            function (reply, rate, err) {
-                callback(reply.statuses);
-            },
->>>>>>> d16c32a9f54d821e797dba0f85dd40bb555eeac7
             true // this parameter required
             );
 }
 ;
 
-<<<<<<< HEAD
 function render(tweets, rate, err) {
-    tweets = tweets.statuses;
-    
-    console.log(tweets)
-    
-    var infowindow = new google.maps.InfoWindow()
-
+    tweets = tweets.statuses;  
+    var infowindow = new google.maps.InfoWindow(); //necesario para el listener del marker
+    funcionclean();
     var marker, tweet;
-    var nombrelibro = document.getElementById("textoBuscador").value.toLowerCase() + " #facultaduma";
+    var nombrelibro = document.getElementById("textoBuscador").value.toLowerCase() + " #sharingtweetbooks";
     for (tweet of tweets) {
         console.log(tweet);
         var simil = similarity(nombrelibro, tweet.text);
-        if (simil >= 0.5 || nombrelibro===" #facultaduma") {
+        if (simil >= 0.5 || nombrelibro===" #sharingtweetbooks") {
             if (tweet.geo.coordinates[0] !== null) {
                 marker = new google.maps.Marker({
                     position: new google.maps.LatLng(tweet.geo.coordinates[0], tweet.geo.coordinates[1]),
                     map: map
                             //tweets[i].text -- tweets[i].user.name -- tweets[i].user.screen_name  // (Tweet text,Twitter user name, user real name)
                 });
-
+                markers.push(marker);
                 google.maps.event.addListener(marker, 'click', (function (marker, tweet) {
                     return function () {
                         infowindow.setContent("<h4>" + tweet.user.screen_name + "</h4>" +
-                                "<p>" + tweet.text + "</p>");
+                                "<p>" + tweet.text + "</p>" + 
+                                "<p>" + "<a href="+urltwitter+ tweet.user.screen_name+ " target='_blank'>Talk to me!</a>" + "</p>");
+                                console.log("https://twitter.com/" + tweet.user.screen_name)
                         infowindow.open(map, marker);
                     };
                 })(marker, tweet));
             } else {
-                console.log(tweet)
+                console.error(tweet);
             }
-=======
-function render(tweets) {
-    console.log(tweets)
-
-    var infowindow = new google.maps.InfoWindow()
-
-    var marker, tweet;
-
-    for (tweet of tweets) {
-        console.log(tweet);
-        console.log(tweet.geo.coordinates[0], tweet.geo.coordinates[1])
-        if (tweet.geo.coordinates[0] !== null) {
-            marker = new google.maps.Marker({
-                position: new google.maps.LatLng(tweet.geo.coordinates[0], tweet.geo.coordinates[1]),
-                map: map
-                        //tweets[i].text -- tweets[i].user.name -- tweets[i].user.screen_name  // (Tweet text,Twitter user name, user real name)
-            });
-
-            google.maps.event.addListener(marker, 'click', (function (marker, tweet) {
-                return function () {
-                    infowindow.setContent("<h4>" + tweet.user.screen_name + "</h4>" +
-                            "<p>" + tweet.text + "</p>");
-                    infowindow.open(map, marker);
-                };
-            })(marker, tweet));
-        } else {
-            console.log(tweet)
->>>>>>> d16c32a9f54d821e797dba0f85dd40bb555eeac7
         }
     }
 }
 
 function funcionlupa() {
-<<<<<<< HEAD
-    searchTweetsByStrNGeo("#facultaduma", "37.781157 -122.398720 1mi", render);
+    searchTweetsByStrNGeo("#sharingtweetbooks", "37.781157 -122.398720 1mi", render);
 }
 function funcionclean(){
-      setMapOnAll(null);
+    //clean all the markers in the map, can be called in index with Clean button or automatically at the Search function
+    for(var i=0; i< markers.length; i++){
+        markers[i].setMap(null);
+    }
+    markers = [];
 }
 
 function similarity(s1, s2) {
@@ -208,9 +166,4 @@ function editDistance(s1, s2) {
       costs[s2.length] = lastValue;
   }
   return costs[s2.length];
-=======
-    searchTweetsByStrNGeo("#facultaduma", "37.781157 -122.398720 1mi", function (tweets) {
-        render(tweets);
-    });
->>>>>>> d16c32a9f54d821e797dba0f85dd40bb555eeac7
 }
