@@ -1,5 +1,3 @@
-/* global google, CONFIG */
-
 "use strict";
 /*
  ================================================================================
@@ -59,10 +57,6 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.open(map);
 }
 
-<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
-
-=======
->>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
 
 function searchTweetsByStrNGeo(hashtag, geocode, callback) {
     // Get Tweets
@@ -70,18 +64,6 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
    var cb = new Codebird();
 
     cb.setBearerToken(CONFIG.BEARER_TOKEN);
-<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
-    
-
-function searchTweetsByStrNGeo(hashtag, geocode, callback) {
-    // Get Tweets
-
-    var cb = new Codebird();
-
-    cb.setBearerToken(CONFIG.BEARER_TOKEN);
-
-=======
->>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
 
     var params = {
         q: hashtag,
@@ -92,25 +74,11 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
     cb.__call(
             "search_tweets",
             params,
-<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
-
             callback,
-
-            function (reply, rate, err) {
-                callback(reply.statuses);
-            },
-
-=======
-            callback,
->>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
             true // this parameter required
             );
 };
 
-<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
-
-=======
->>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
 function render(tweets, rate, err) {
     tweets = tweets.statuses;
     var infowindow = new google.maps.InfoWindow(); //necesario para el listener del marker
@@ -141,48 +109,12 @@ function render(tweets, rate, err) {
             } else {
                 console.error(tweet);
             }
-<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
-
-function render(tweets) {
-    console.log(tweets)
-
-    var infowindow = new google.maps.InfoWindow()
-
-    var marker, tweet;
-
-    for (tweet of tweets) {
-        console.log(tweet);
-        console.log(tweet.geo.coordinates[0], tweet.geo.coordinates[1])
-        if (tweet.geo.coordinates[0] !== null) {
-            marker = new google.maps.Marker({
-                position: new google.maps.LatLng(tweet.geo.coordinates[0], tweet.geo.coordinates[1]),
-                map: map
-                        //tweets[i].text -- tweets[i].user.name -- tweets[i].user.screen_name  // (Tweet text,Twitter user name, user real name)
-            });
-
-            google.maps.event.addListener(marker, 'click', (function (marker, tweet) {
-                return function () {
-                    infowindow.setContent("<h4>" + tweet.user.screen_name + "</h4>" +
-                            "<p>" + tweet.text + "</p>");
-                    infowindow.open(map, marker);
-                };
-            })(marker, tweet));
-        } else {
-            console.log(tweet)
-
-=======
->>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
         }
     }
 }
 
 function funcionlupa() {
-<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
-
-    searchTweetsByStrNGeo("#facultaduma", "37.781157 -122.398720 1mi", render);
-=======
     searchTweetsByStrNGeo("#sharingtweetbooks", "37.781157 -122.398720 1mi", render);
->>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
 }
 function funcionclean(){
     //clean all the markers in the map, can be called in index with Clean button or automatically at the Search function
@@ -232,13 +164,4 @@ function editDistance(s1, s2) {
       costs[s2.length] = lastValue;
   }
   return costs[s2.length];
-<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
-
-    searchTweetsByStrNGeo("#facultaduma", "37.781157 -122.398720 1mi", function (tweets) {
-        render(tweets);
-    });
-
-}        
-=======
 }
->>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
