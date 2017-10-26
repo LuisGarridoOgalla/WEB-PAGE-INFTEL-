@@ -15,6 +15,8 @@
  */
 var map;
 var infoWindow;
+var markers = [];
+var urltwitter="https://twitter.com/"; 
 function initMap() {
     var centerWorld = {lat: 0, lng: 0};
     infoWindow = new google.maps.InfoWindow;
@@ -57,7 +59,10 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.open(map);
 }
 
+<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
 
+=======
+>>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
 
 function searchTweetsByStrNGeo(hashtag, geocode, callback) {
     // Get Tweets
@@ -65,6 +70,7 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
    var cb = new Codebird();
 
     cb.setBearerToken(CONFIG.BEARER_TOKEN);
+<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
     
 
 function searchTweetsByStrNGeo(hashtag, geocode, callback) {
@@ -74,6 +80,8 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
 
     cb.setBearerToken(CONFIG.BEARER_TOKEN);
 
+=======
+>>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
 
     var params = {
         q: hashtag,
@@ -81,11 +89,10 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
         count: "100"
     };
 
-    var tweets;
-
     cb.__call(
             "search_tweets",
             params,
+<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
 
             callback,
 
@@ -93,42 +100,48 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
                 callback(reply.statuses);
             },
 
+=======
+            callback,
+>>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
             true // this parameter required
             );
-}
-;
+};
 
+<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
 
+=======
+>>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
 function render(tweets, rate, err) {
     tweets = tweets.statuses;
-    
-    console.log(tweets)
-    
-    var infowindow = new google.maps.InfoWindow()
-
+    var infowindow = new google.maps.InfoWindow(); //necesario para el listener del marker
+    funcionclean();
     var marker, tweet;
-    var nombrelibro = document.getElementById("textoBuscador").value.toLowerCase() + " #facultaduma";
+    var nombrelibro = document.getElementById("textoBuscador").value.toLowerCase() + " #sharingtweetbooks";
     for (tweet of tweets) {
-        console.log(tweet);
         var simil = similarity(nombrelibro, tweet.text);
-        if (simil >= 0.5 || nombrelibro===" #facultaduma") {
-            if (tweet.geo.coordinates[0] !== null) {
+        if (simil >= 0.5 || nombrelibro === " #sharingtweetbooks") {
+            if (tweet.geo !== null) {
+
+                console.log(tweet);
                 marker = new google.maps.Marker({
                     position: new google.maps.LatLng(tweet.geo.coordinates[0], tweet.geo.coordinates[1]),
                     map: map
                             //tweets[i].text -- tweets[i].user.name -- tweets[i].user.screen_name  // (Tweet text,Twitter user name, user real name)
                 });
-
+                markers.push(marker);
                 google.maps.event.addListener(marker, 'click', (function (marker, tweet) {
                     return function () {
                         infowindow.setContent("<h4>" + tweet.user.screen_name + "</h4>" +
-                                "<p>" + tweet.text + "</p>");
+                                "<p>" + tweet.text + "</p>" +
+                                "<p>" + "<a href=" + urltwitter + tweet.user.screen_name + " target='_blank'>Talk to me!</a>" + "</p>");
+                        console.log("https://twitter.com/" + tweet.user.screen_name)
                         infowindow.open(map, marker);
                     };
                 })(marker, tweet));
             } else {
-                console.log(tweet)
+                console.error(tweet);
             }
+<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
 
 function render(tweets) {
     console.log(tweets)
@@ -157,16 +170,26 @@ function render(tweets) {
         } else {
             console.log(tweet)
 
+=======
+>>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
         }
     }
 }
 
 function funcionlupa() {
+<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
 
     searchTweetsByStrNGeo("#facultaduma", "37.781157 -122.398720 1mi", render);
+=======
+    searchTweetsByStrNGeo("#sharingtweetbooks", "37.781157 -122.398720 1mi", render);
+>>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
 }
 function funcionclean(){
-      setMapOnAll(null);
+    //clean all the markers in the map, can be called in index with Clean button or automatically at the Search function
+    for(var i=0; i< markers.length; i++){
+        markers[i].setMap(null);
+    }
+    markers = [];
 }
 
 function similarity(s1, s2) {
@@ -209,9 +232,13 @@ function editDistance(s1, s2) {
       costs[s2.length] = lastValue;
   }
   return costs[s2.length];
+<<<<<<< HEAD:STB/public_html/assets/js/searchandrender.js
 
     searchTweetsByStrNGeo("#facultaduma", "37.781157 -122.398720 1mi", function (tweets) {
         render(tweets);
     });
 
 }        
+=======
+}
+>>>>>>> 1516d2c3fa1a8844fa466af6cec867ad702d7f95:STB-Final/public_html/assets/js/searchandrender.js
