@@ -64,8 +64,6 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
    var cb = new Codebird();
 
     cb.setBearerToken(CONFIG.BEARER_TOKEN);
-    
-     
 
     var params = {
         q: hashtag,
@@ -79,20 +77,20 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
             callback,
             true // this parameter required
             );
-}
-;
+};
 
 function render(tweets, rate, err) {
-    tweets = tweets.statuses;  
+    tweets = tweets.statuses;
     var infowindow = new google.maps.InfoWindow(); //necesario para el listener del marker
     funcionclean();
     var marker, tweet;
     var nombrelibro = document.getElementById("textoBuscador").value.toLowerCase() + " #sharingtweetbooks";
     for (tweet of tweets) {
-        console.log(tweet);
         var simil = similarity(nombrelibro, tweet.text);
-        if (simil >= 0.5 || nombrelibro===" #sharingtweetbooks") {
-            if (tweet.geo.coordinates[0] !== null) {
+        if (simil >= 0.5 || nombrelibro === " #sharingtweetbooks") {
+            if (tweet.geo !== null) {
+
+                console.log(tweet);
                 marker = new google.maps.Marker({
                     position: new google.maps.LatLng(tweet.geo.coordinates[0], tweet.geo.coordinates[1]),
                     map: map
@@ -102,9 +100,9 @@ function render(tweets, rate, err) {
                 google.maps.event.addListener(marker, 'click', (function (marker, tweet) {
                     return function () {
                         infowindow.setContent("<h4>" + tweet.user.screen_name + "</h4>" +
-                                "<p>" + tweet.text + "</p>" + 
-                                "<p>" + "<a href="+urltwitter+ tweet.user.screen_name+ " target='_blank'>Talk to me!</a>" + "</p>");
-                                console.log("https://twitter.com/" + tweet.user.screen_name)
+                                "<p>" + tweet.text + "</p>" +
+                                "<p>" + "<a href=" + urltwitter + tweet.user.screen_name + " target='_blank'>Talk to me!</a>" + "</p>");
+                        console.log("https://twitter.com/" + tweet.user.screen_name)
                         infowindow.open(map, marker);
                     };
                 })(marker, tweet));
