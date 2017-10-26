@@ -1,3 +1,5 @@
+/* global google, CONFIG */
+
 "use strict";
 /*
  ================================================================================
@@ -55,7 +57,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
     infoWindow.open(map);
 }
 
-<<<<<<< HEAD
+
 
 function searchTweetsByStrNGeo(hashtag, geocode, callback) {
     // Get Tweets
@@ -64,15 +66,14 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
 
     cb.setBearerToken(CONFIG.BEARER_TOKEN);
     
-     
-=======
+
 function searchTweetsByStrNGeo(hashtag, geocode, callback) {
     // Get Tweets
 
     var cb = new Codebird();
 
     cb.setBearerToken(CONFIG.BEARER_TOKEN);
->>>>>>> d16c32a9f54d821e797dba0f85dd40bb555eeac7
+
 
     var params = {
         q: hashtag,
@@ -85,19 +86,19 @@ function searchTweetsByStrNGeo(hashtag, geocode, callback) {
     cb.__call(
             "search_tweets",
             params,
-<<<<<<< HEAD
+
             callback,
-=======
+
             function (reply, rate, err) {
                 callback(reply.statuses);
             },
->>>>>>> d16c32a9f54d821e797dba0f85dd40bb555eeac7
+
             true // this parameter required
             );
 }
 ;
 
-<<<<<<< HEAD
+
 function render(tweets, rate, err) {
     tweets = tweets.statuses;
     
@@ -128,7 +129,7 @@ function render(tweets, rate, err) {
             } else {
                 console.log(tweet)
             }
-=======
+
 function render(tweets) {
     console.log(tweets)
 
@@ -155,13 +156,13 @@ function render(tweets) {
             })(marker, tweet));
         } else {
             console.log(tweet)
->>>>>>> d16c32a9f54d821e797dba0f85dd40bb555eeac7
+
         }
     }
 }
 
 function funcionlupa() {
-<<<<<<< HEAD
+
     searchTweetsByStrNGeo("#facultaduma", "37.781157 -122.398720 1mi", render);
 }
 function funcionclean(){
@@ -208,9 +209,9 @@ function editDistance(s1, s2) {
       costs[s2.length] = lastValue;
   }
   return costs[s2.length];
-=======
+
     searchTweetsByStrNGeo("#facultaduma", "37.781157 -122.398720 1mi", function (tweets) {
         render(tweets);
     });
->>>>>>> d16c32a9f54d821e797dba0f85dd40bb555eeac7
-}
+
+}        
