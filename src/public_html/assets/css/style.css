@@ -1,15 +1,10 @@
-.mapwrapper {
+/* Makes map fill the window. */
+.mapwrapper
+{
     height: calc(100% - 56px);
 }
 
-/* Makes map fill the window. */
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
-
-/* Adjustamos el buscador al contenido */
-#textoBuscador{
+#searchField
+{
   width: 400px;
 }

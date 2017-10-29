@@ -1,167 +1,129 @@
+/* 
+ * The MIT License
+ *
+ * Copyright 2017 Anthony Gaudino, Iván Corbacho, Luís Garrido, Pablo Ramírez
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
 "use strict";
 /*
- ================================================================================
- Gets the all tweets in the last 7 days that countain a specific string and
- geocode.
- 
- Parameters:
- hashtag: String containing the hashtag, ex: #myhashtag
- geocode: String containing the geocode, ex: 37.781157 -122.398720 1mi
- 
- Returns: nothing
- ================================================================================
+ ===============================================================================
+ Main code to perform book searches
+ ===============================================================================
  */
-var map;
-var infoWindow;
-var markers = [];
-var urltwitter="https://twitter.com/"; 
-function initMap() {
-    var centerWorld = {lat: 0, lng: 0};
-    infoWindow = new google.maps.InfoWindow;
-
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: Math.round(Math.log($(window).width() / 512)) + 1,
-        center: centerWorld
-    });
-
-    // Try HTML5 geolocation.
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            var pos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-
-            infoWindow.setPosition(pos);
-            infoWindow.setContent("We think you're here!<br><br>If not please drag the map to where you are.");
-            infoWindow.open(map);
-
-            map.setCenter(pos);
-            map.setZoom(12);
-        }, function () {
-            handleLocationError(true, infoWindow, map.getCenter());
-        });
-    } else {
-        // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
-    }
-}
-
-
-
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(browserHasGeolocation ?
-            'Error: The Geolocation service failed.' :
-            'Error: Your browser doesn\'t support geolocation.');
-    infoWindow.open(map);
-}
-
-
-function searchTweetsByStrNGeo(hashtag, geocode, callback) {
-    // Get Tweets
-
-   var cb = new Codebird();
-
-    cb.setBearerToken(CONFIG.BEARER_TOKEN);
-
-    var params = {
-        q: hashtag,
-        resultType: "recent",
-        count: "100"
+var snr = ( function()
+{
+    let fuseOptions =
+    {
+        shouldSort:         true,
+        threshold:          0.6,
+        location:           0,
+        distance:           100,
+        maxPatternLength:   32,
+        minMatchCharLength: 1,
+        keys:               [ "text" ]
     };
+    /*
+    ============================================================================
+    Render the results on a Google Map by using markers with content.
 
-    cb.__call(
-            "search_tweets",
-            params,
-            callback,
-            true // this parameter required
-            );
-};
+    Parameters:
+            tweets:   An array containing tweets and it's data
+            bookName: The string (book name) the user is looking for
 
-function render(tweets, rate, err) {
-    tweets = tweets.statuses;
-    var infowindow = new google.maps.InfoWindow(); //necesario para el listener del marker
-    funcionclean();
-    var marker, tweet;
-    var nombrelibro = document.getElementById("textoBuscador").value.toLowerCase() + " #sharingtweetbooks";
-    for (tweet of tweets) {
-        var simil = similarity(nombrelibro, tweet.text);
-        if (simil >= 0.5 || nombrelibro === " #sharingtweetbooks") {
-            if (tweet.geo !== null) {
-
-                console.log(tweet);
-                marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(tweet.geo.coordinates[0], tweet.geo.coordinates[1]),
-                    map: map
-                            //tweets[i].text -- tweets[i].user.name -- tweets[i].user.screen_name  // (Tweet text,Twitter user name, user real name)
-                });
-                markers.push(marker);
-                google.maps.event.addListener(marker, 'click', (function (marker, tweet) {
-                    return function () {
-                        infowindow.setContent("<h4>" + tweet.user.screen_name + "</h4>" +
-                                "<p>" + tweet.text + "</p>" +
-                                "<p>" + "<a href=" + urltwitter + tweet.user.screen_name + " target='_blank'>Talk to me!</a>" + "</p>");
-                        console.log("https://twitter.com/" + tweet.user.screen_name)
-                        infowindow.open(map, marker);
-                    };
-                })(marker, tweet));
-            } else {
-                console.error(tweet);
+    Returns: Nothing
+    ============================================================================
+    */
+    function render( tweets, bookName )
+    {
+        // Delete all old markers before adding more
+        gmap.deleteMarkers();
+        
+        if ( tweets === undefined || tweets.length === 0 )    return;
+        
+        // Removes all tweets that aren't geotagged
+        //----------------------------------------------------------------------
+        tweets.forEach( function( tweet ) {
+            if (    tweet.geo === undefined
+                 || tweet.geo === null 
+                 || tweet.geo.coordinates[0] === undefined
+                 || tweet.geo.coordinates[0] === null )
+            {
+               tweets.splice( tweets.indexOf( tweet ), 1 );
             }
+        });
+        
+        if ( tweets.length === 0 )    return;
+        
+        
+        // Check if tweets have the requested query string in a fuzzy way
+        //----------------------------------------------------------------------
+        if ( bookName || bookName.length > 0 )
+        {
+            let fuse = new Fuse( tweets, fuseOptions );
+            
+            tweets   = fuse.search( bookName );
+        }
+        
+        
+        for ( const tweet of tweets )
+        {
+            
+            gmap.addMarkerWMessage( {lat: tweet.geo.coordinates[0], lng: tweet.geo.coordinates[1]},
+                                    "<h4>" + tweet.user.screen_name + "</h4>"          +
+                                    "<p>"  + tweet.text             + "</p>"           +
+                                    "<p>"  + "<a href="             + DATA.TWITTER_URL +
+                                    tweet.user.screen_name + " target='_blank'>Talk to me!</a>" + "</p>" );
         }
     }
-}
-
-function funcionlupa() {
-    searchTweetsByStrNGeo("#sharingtweetbooks", "37.781157 -122.398720 1mi", render);
-}
-function funcionclean(){
-    //clean all the markers in the map, can be called in index with Clean button or automatically at the Search function
-    for(var i=0; i< markers.length; i++){
-        markers[i].setMap(null);
-    }
-    markers = [];
-}
-
-function similarity(s1, s2) {
-  var longer = s1;
-  var shorter = s2;
-  if (s1.length < s2.length) {
-    longer = s2;
-    shorter = s1;
-  }
-  var longerLength = longer.length;
-  if (longerLength === 0) {
-    return 1.0;
-  }
-  return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
-}
+    
+    
+    
+    return {
+        /*
+        ========================================================================
+        Executes a search when the user clicks on the search button.
+        ========================================================================
+        */
+        execSearch: async function ()
+        {
+            let bookName      = document.getElementById( "searchField" ).value.toLowerCase();
+            // Gets the center of map coordenates
+            let centerOfMap   = gmap.getMapCenter();
+            let radius        = Math.round( gmap.getBounds() / 1000 );
+            let coordsNRadius = centerOfMap.lat + "," + centerOfMap.lng + "," + radius + "km";
+            
+            let twAPIQueryRes;
 
 
-function editDistance(s1, s2) {
-  s1 = s1.toLowerCase();
-  s2 = s2.toLowerCase();
+            try
+            {
+                twAPIQueryRes = await tw.searchTweetsByStrNGeo( CONFIG.HASHTAG, coordsNRadius );
+            } catch ( e )
+            {
+                console.log( "Unknow error!" );
+            }
 
-  var costs = new Array();
-  for (var i = 0; i <= s1.length; i++) {
-    var lastValue = i;
-    for (var j = 0; j <= s2.length; j++) {
-      if (i === 0)
-        costs[j] = j;
-      else {
-        if (j > 0) {
-          var newValue = costs[j - 1];
-          if (s1.charAt(i - 1) !== s2.charAt(j - 1))
-            newValue = Math.min(Math.min(newValue, lastValue),
-              costs[j]) + 1;
-          costs[j - 1] = lastValue;
-          lastValue = newValue;
+
+            render( twAPIQueryRes.tweets, bookName );
         }
-      }
-    }
-    if (i > 0)
-      costs[s2.length] = lastValue;
-  }
-  return costs[s2.length];
-}
+    };
+} )();

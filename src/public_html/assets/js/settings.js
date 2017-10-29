@@ -1,24 +1,49 @@
+/* 
+ * The MIT License
+ *
+ * Copyright 2017 Anthony Gaudino, Iván Corbacho, Luís Garrido, Pablo Ramírez
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
 "use strict";
 
 
-/*******************************************************************************
+/*
+********************************************************************************
 
 System settings
 
-*******************************************************************************/
+********************************************************************************
+*/
 
 // System configuration settings
 var CONFIG = {
 //Twitter
-  BEARER_TOKEN:     "AAAAAAAAAAAAAAAAAAAAANW0xgAAAAAAo4D394ufsc8pSu9hZnnl1ZIlwvg%3DlEdGmg44WERzAjdrjYmhLMKoWPTGqCjY8DRNBZTpcmOwvXrbBV",
-  NUM_HASHTAGS:     5
+  BEARER_TOKEN: "AAAAAAAAAAAAAAAAAAAAANW0xgAAAAAAo4D394ufsc8pSu9hZnnl1ZIlwvg%3DlEdGmg44WERzAjdrjYmhLMKoWPTGqCjY8DRNBZTpcmOwvXrbBV",
+  HASHTAG:      "#sharingtweetbooks"
 };
 
 
 
-// System limitations
-var LIMITS = {
-  MAX_TWEETS:       10 // TODO add the maximum number of tweets we can get.
-  //MAX_HASHTAGS:   50  // As imposed by Twitter.
-  //NUM_EBAY_ITEMS: 3,
+// System data
+var DATA = {
+  TWITTER_URL: "https://twitter.com/"
 };
